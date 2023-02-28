@@ -9,8 +9,6 @@ import android.os.IBinder
 /**
  * @author ikvarxt
  */
-const val SERVICE_NAME = "me.ikvarxt.ipc_conn.MyService"
-
 class MyService : Service() {
 
     override fun onBind(intent: Intent?): IBinder {

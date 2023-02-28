@@ -1,12 +1,10 @@
-package me.ikvarxt.androidipcdemo
+package me.ikvarxt.app_target
 
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,11 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.os.bundleOf
-import me.ikvarxt.androidipcdemo.ui.theme.AndroidIpcDemoTheme
+import me.ikvarxt.app_target.ui.theme.AndroidIpcDemoTheme
 import me.ikvarxt.ipc_conn.CommandCore
 import me.ikvarxt.ipc_conn.IConnection
+import me.ikvarxt.ipc_conn.MyService
 
-class MainActivity : ComponentActivity() {
+class TargetActivity : ComponentActivity() {
 
     private var iconn: IConnection? = null
 
@@ -33,45 +32,42 @@ class MainActivity : ComponentActivity() {
             AndroidIpcDemoTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Greeting("Android") {
-                        val b = bundleOf(
-                            CommandCore.KEY_COMMAND to CommandCore.CMD_PRINT_LOG,
-                            CommandCore.KEY_MESSAGE to "Hello Android!".repeat(100000)
-                        )
-                        if (iconn != null) {
-                            iconn?.doCommand(b)
-                        } else {
-                            Toast.makeText(this@MainActivity, "iconn null", Toast.LENGTH_SHORT).show()
-                        }
+                    Greeting("I'm target process") {
+//                        click()
                     }
                 }
             }
         }
 
-        Intent().also {
-//            it.action = "ikvarxt_action"
-//            it.`package` = "me.ikvarxt.app_target"
-            it.component = ComponentName("me.ikvarxt.app_target", "me.ikvarxt.ipc_conn.MyService")
-            val status = bindService(it, object : ServiceConnection {
+//        bindService()
+    }
+
+    private fun click() {
+        if (iconn != null) {
+            val b = bundleOf(
+                CommandCore.KEY_COMMAND to CommandCore.CMD_PRINT_LOG,
+                CommandCore.KEY_MESSAGE to "Hello Android!"
+            )
+            iconn?.doCommand(b)
+        } else Toast.makeText(this, "iconn null", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun bindService() {
+        Intent(this, MyService::class.java).also {
+            bindService(it, object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                     if (service != null) {
-                        log("service connected")
                         iconn = IConnection.Stub.asInterface(service)
                     } else {
-                        log("remote service is null")
+                        Toast.makeText(this@TargetActivity, "service null", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onServiceDisconnected(name: ComponentName?) {
-                    log("service disconnected")
+                    TODO("Not yet implemented")
                 }
-            }, Context.BIND_AUTO_CREATE)
-            log("bind service status: $status")
+            }, BIND_AUTO_CREATE)
         }
-    }
-
-    private fun log(msg: String) {
-        Log.d("MainActivity", msg)
     }
 }
 
@@ -81,7 +77,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier, click: () -> Unit) {
         modifier = modifier,
         onClick = click
     ) {
-        Text(text = "Hello $name!")
+        Text(text = "hello $name!")
     }
 }
 
@@ -89,8 +85,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier, click: () -> Unit) {
 @Composable
 fun GreetingPreview() {
     AndroidIpcDemoTheme {
-        Greeting("Android") {
-
-        }
+        Greeting("Android") {}
     }
 }

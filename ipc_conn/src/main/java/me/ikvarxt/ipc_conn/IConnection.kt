@@ -54,7 +54,7 @@ interface IConnection : IInterface {
                     if (bundle != null) {
                         val status = doCommand(bundle)
                         reply?.writeNoException()
-                        reply?.writeInt(status.toString().toInt())
+                        reply?.writeInt(if (status) 1 else 0)
                     }
                     return true
                 }
@@ -74,7 +74,7 @@ interface IConnection : IInterface {
                 val result: Boolean?
 
                 try {
-                    data.enforceInterface(DESCRIPTOR)
+                    data.writeInterfaceToken(DESCRIPTOR)
                     bundle.writeToParcel(data, 0)
                     mRemote.transact(TRANS_doCommand, data, reply, 0)
 

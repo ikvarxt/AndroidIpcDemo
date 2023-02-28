@@ -5,6 +5,11 @@
 
         <service
             android:name=".MyService"
-            android:enabled="false" />
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="me.ikvarxt.ipc_conn.service" />
+            </intent-filter>
+        </service>
     </application>
 </manifest>

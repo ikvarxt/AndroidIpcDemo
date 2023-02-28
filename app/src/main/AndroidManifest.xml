@@ -25,4 +25,8 @@
         </activity>
     </application>
 
+    <queries>
+        <package android:name="me.ikvarxt.app_target" />
+    </queries>
+
 </manifest>
