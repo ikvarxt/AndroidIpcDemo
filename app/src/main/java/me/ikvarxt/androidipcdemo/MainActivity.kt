@@ -34,14 +34,8 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     Greeting("Android") {
-                        val b = bundleOf(
-                            CommandCore.KEY_COMMAND to CommandCore.CMD_PRINT_LOG,
-                            CommandCore.KEY_MESSAGE to "Hello Android!".repeat(100000)
-                        )
-                        if (iconn != null) {
-                            iconn?.doCommand(b)
-                        } else {
-                            Toast.makeText(this@MainActivity, "iconn null", Toast.LENGTH_SHORT).show()
+                        repeat(100) {
+                            clickAction(10000)
                         }
                     }
                 }
@@ -49,8 +43,11 @@ class MainActivity : ComponentActivity() {
         }
 
         Intent().also {
-//            it.action = "ikvarxt_action"
-//            it.`package` = "me.ikvarxt.app_target"
+            // use action & package
+            // it.action = "me.ikvarxt.ipc_conn.service"
+            // it.`package` = "me.ikvarxt.app_target"
+
+            // or component
             it.component = ComponentName("me.ikvarxt.app_target", "me.ikvarxt.ipc_conn.MyService")
             val status = bindService(it, object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -67,6 +64,18 @@ class MainActivity : ComponentActivity() {
                 }
             }, Context.BIND_AUTO_CREATE)
             log("bind service status: $status")
+        }
+    }
+
+    private fun clickAction(stringCount: Int) {
+        val b = bundleOf(
+            CommandCore.KEY_COMMAND to CommandCore.CMD_PRINT_LOG,
+            CommandCore.KEY_MESSAGE to "Hello Android!".repeat(stringCount)
+        )
+        if (iconn != null) {
+            iconn?.doCommand(b)
+        } else {
+            Toast.makeText(this@MainActivity, "iconn null", Toast.LENGTH_SHORT).show()
         }
     }
 
